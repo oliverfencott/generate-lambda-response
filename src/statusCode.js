@@ -1,1 +1,3 @@
-module.exports = require('./utils').createKeyedObject('statusCode');
+const _createKeyedObject = require('./_createKeyedObject');
+
+module.exports = _createKeyedObject('statusCode');

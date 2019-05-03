@@ -1,4 +1,4 @@
 const statusCode = require('../statusCode');
-const { hoistedMerge } = require('../utils');
+const _hoistedMerge = require('../_hoistedMerge');
 
-module.exports = hoistedMerge(statusCode(428));
+module.exports = _hoistedMerge(statusCode(428));

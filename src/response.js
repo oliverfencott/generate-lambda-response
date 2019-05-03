@@ -1,1 +1,1 @@
-module.exports = require('./utils').recursiveMerge;
+module.exports = require('./_recursiveMerge');

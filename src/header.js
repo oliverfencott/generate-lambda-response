@@ -1,1 +1,1 @@
-module.exports = require('./utils').createKeyedObject;
+module.exports = require('./_createKeyedObject');

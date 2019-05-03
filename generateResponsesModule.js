@@ -1,77 +1,61 @@
 const { promisify } = require('util');
 const fs = require('fs');
 const [ readFile, writeFile ] = [ promisify(fs.readFile), promisify(fs.writeFile) ];
-const _ = require('lodash');
+const {
+  camelCase,
+  pipe,
+  filter,
+  split,
+  map,
+  slice,
+  negate,
+  join,
+  constant,
+  prop,
+  concat
+} = require('lodash/fp');
 const rimraf = require('rimraf');
 
+const { helperFile, testFile, indexFile } = require('./generateTemplates');
 
 const outputDirectory = 'src/responses';
 
 rimraf.sync(outputDirectory);
+console.log(`🗑  Deleted stale "${outputDirectory}" directory`);
 fs.mkdirSync(outputDirectory);
+console.log(`📦  Created fresh "${outputDirectory}" directory`);
 
 const catchError = error => {
   console.log(error.toString());
   throw error;
 };
 
-const pullOnlyStatusCodes = data => data.filter(str => !Number.isNaN(Number(str.slice(0, 3))));
+const writeFileFactory = (nameGenerator, generator) => input => writeFile(
+  `${outputDirectory}/${nameGenerator(input)}.js`,
+  generator(input)
+).then(constant(input));
 
-const generateCodeTemplate = ({ statusCode }) => (
-  `const statusCode = require('../statusCode');
-const { hoistedMerge } = require('../utils');
+const writeResponseFile = writeFileFactory(prop('functionName'), helperFile);
+const writeResponseTestFile = writeFileFactory(pipe(({ functionName }) => `${functionName}.test`), testFile);
+const writeResponseIndexFile = writeFileFactory(constant('index'), indexFile);
 
-module.exports = hoistedMerge(statusCode(${statusCode}));`);
+const pullStatusCode = pipe(slice(0, 3), join(''));
+const pullOnlyStatusCodes = filter(pipe(pullStatusCode, Number, negate(Number.isNaN)));
 
-const generateTestTemplate = ({ statusCode, functionName }) => (
-  `const ${functionName} = require('./${functionName}');
-const body = require('../body');
-const headers = require('../headers');
-const header = require('../header');
-
-const MOCK_STATUS_CODE_RESPONSE = { statusCode: ${statusCode} };
-const MOCK_HEADER_NAME = 'x-powered-by';
-const MOCK_HEADER_VALUE = 'somedomain.com';
-const MOCK_BODY = { hello: 'world' };
-const MOCK_RESPONSE = {
-  ...MOCK_STATUS_CODE_RESPONSE,
-  body: JSON.stringify(MOCK_BODY),
-  headers: {
-    [MOCK_HEADER_NAME]: MOCK_HEADER_VALUE
-  }
-};
-
-describe('${functionName} function', () => {
-  it('returns correct status code in object', () => {
-    expect(${functionName}()).toEqual(MOCK_STATUS_CODE_RESPONSE);
-  });
-
-  it('composes with headers and body passed', () => {
-    expect(
-      ${functionName}(
-        body(MOCK_BODY),
-        headers(
-          header(MOCK_HEADER_NAME, MOCK_HEADER_VALUE)
-        )
-    )).toEqual(MOCK_RESPONSE);
-  });
-});`);
 
 readFile('./httpStatusCodes.md', 'utf-8')
   .catch(catchError)
-  .then(data => data.split('\n').filter(Boolean))
+  .then(pipe(split('\n'), filter(Boolean)))
   .then(pullOnlyStatusCodes)
-  .then(codes => codes.map(code => ({ statusCode: Number(code.slice(0, 3)), functionName: _.camelCase(code.slice(4)) })))
-  .then(codes => (
-    Promise
-      .all(
-        codes.map(code => (
-          writeFile(`${outputDirectory}/${code.functionName}.js`, generateCodeTemplate(code))
-            .catch(catchError)
-            .then(() => writeFile(`${outputDirectory}/${code.functionName}.test.js`, generateTestTemplate(code)))
-            .catch(catchError)
-        ))
-      )
-  ))
-  .then(() => console.log('successfully wrote files'))
+  .then(map(code => ([ pullStatusCode(code), code.slice(4) ])))
+  .then(map(([ statusCode, functionName ]) => ([ Number(statusCode), camelCase(functionName) ])))
+  .then(map(([ statusCode, functionName ]) => ({ statusCode, functionName })))
+  .then(writeResponseIndexFile)
+  .then(codes => (console.log(`✅  Successfully generated index file`), codes))
+  .then(map(writeResponseFile))
+  .then(Promise.all.bind(Promise))
+  .then(codes => (console.log(`✅  Successfully generated code files`), codes))
+  .then(map(writeResponseTestFile))
+  .then(Promise.all.bind(Promise))
+  .then(codes => (console.log(`✅  Successfully generated test files`), codes))
   .catch(catchError)

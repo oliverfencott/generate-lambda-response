@@ -1,3 +1,4 @@
-const { compose, createKeyedObject} = require('./utils');
+const _pipe = require('./_pipe');
+const _createKeyedObject = require('./_createKeyedObject');
 
-module.exports = compose(JSON.stringify, createKeyedObject('body'));
+module.exports = _pipe(JSON.stringify, _createKeyedObject('body'));
