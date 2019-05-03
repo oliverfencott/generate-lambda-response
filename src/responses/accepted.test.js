@@ -1,7 +1,11 @@
+/* This is an auto-generated file. */
+
 const accepted = require('./accepted');
 const body = require('../body');
 const headers = require('../headers');
 const header = require('../header');
+const statusCode = require('../statusCode');
+const response = require('../response');
 
 const MOCK_STATUS_CODE_RESPONSE = { statusCode: 202 };
 const MOCK_HEADER_NAME = 'x-powered-by';
@@ -16,10 +20,6 @@ const MOCK_RESPONSE = {
 };
 
 describe('accepted function', () => {
-  it('returns correct status code in object', () => {
-    expect(accepted()).toEqual(MOCK_STATUS_CODE_RESPONSE);
-  });
-
   it('composes with headers and body passed', () => {
     expect(
       accepted(
@@ -28,5 +28,13 @@ describe('accepted function', () => {
           header(MOCK_HEADER_NAME, MOCK_HEADER_VALUE)
         )
     )).toEqual(MOCK_RESPONSE);
+  });
+
+  it('is equal to the functions that it composes', () => {
+    expect(accepted()).toEqual(response(accepted()));
+    expect(accepted()).toEqual(response(statusCode(202)));
+    expect(accepted()).toEqual(response(MOCK_STATUS_CODE_RESPONSE));
+    expect(accepted()).toEqual(statusCode(202));
+    expect(accepted()).toEqual(MOCK_STATUS_CODE_RESPONSE);
   });
 });

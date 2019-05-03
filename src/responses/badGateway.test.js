@@ -1,7 +1,11 @@
+/* This is an auto-generated file. */
+
 const badGateway = require('./badGateway');
 const body = require('../body');
 const headers = require('../headers');
 const header = require('../header');
+const statusCode = require('../statusCode');
+const response = require('../response');
 
 const MOCK_STATUS_CODE_RESPONSE = { statusCode: 502 };
 const MOCK_HEADER_NAME = 'x-powered-by';
@@ -16,10 +20,6 @@ const MOCK_RESPONSE = {
 };
 
 describe('badGateway function', () => {
-  it('returns correct status code in object', () => {
-    expect(badGateway()).toEqual(MOCK_STATUS_CODE_RESPONSE);
-  });
-
   it('composes with headers and body passed', () => {
     expect(
       badGateway(
@@ -28,5 +28,13 @@ describe('badGateway function', () => {
           header(MOCK_HEADER_NAME, MOCK_HEADER_VALUE)
         )
     )).toEqual(MOCK_RESPONSE);
+  });
+
+  it('is equal to the functions that it composes', () => {
+    expect(badGateway()).toEqual(response(badGateway()));
+    expect(badGateway()).toEqual(response(statusCode(502)));
+    expect(badGateway()).toEqual(response(MOCK_STATUS_CODE_RESPONSE));
+    expect(badGateway()).toEqual(statusCode(502));
+    expect(badGateway()).toEqual(MOCK_STATUS_CODE_RESPONSE);
   });
 });

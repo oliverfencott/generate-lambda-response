@@ -1,7 +1,11 @@
+/* This is an auto-generated file. */
+
 const expectationFailed = require('./expectationFailed');
 const body = require('../body');
 const headers = require('../headers');
 const header = require('../header');
+const statusCode = require('../statusCode');
+const response = require('../response');
 
 const MOCK_STATUS_CODE_RESPONSE = { statusCode: 417 };
 const MOCK_HEADER_NAME = 'x-powered-by';
@@ -16,10 +20,6 @@ const MOCK_RESPONSE = {
 };
 
 describe('expectationFailed function', () => {
-  it('returns correct status code in object', () => {
-    expect(expectationFailed()).toEqual(MOCK_STATUS_CODE_RESPONSE);
-  });
-
   it('composes with headers and body passed', () => {
     expect(
       expectationFailed(
@@ -28,5 +28,13 @@ describe('expectationFailed function', () => {
           header(MOCK_HEADER_NAME, MOCK_HEADER_VALUE)
         )
     )).toEqual(MOCK_RESPONSE);
+  });
+
+  it('is equal to the functions that it composes', () => {
+    expect(expectationFailed()).toEqual(response(expectationFailed()));
+    expect(expectationFailed()).toEqual(response(statusCode(417)));
+    expect(expectationFailed()).toEqual(response(MOCK_STATUS_CODE_RESPONSE));
+    expect(expectationFailed()).toEqual(statusCode(417));
+    expect(expectationFailed()).toEqual(MOCK_STATUS_CODE_RESPONSE);
   });
 });

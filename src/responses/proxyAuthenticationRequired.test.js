@@ -1,7 +1,11 @@
+/* This is an auto-generated file. */
+
 const proxyAuthenticationRequired = require('./proxyAuthenticationRequired');
 const body = require('../body');
 const headers = require('../headers');
 const header = require('../header');
+const statusCode = require('../statusCode');
+const response = require('../response');
 
 const MOCK_STATUS_CODE_RESPONSE = { statusCode: 407 };
 const MOCK_HEADER_NAME = 'x-powered-by';
@@ -16,10 +20,6 @@ const MOCK_RESPONSE = {
 };
 
 describe('proxyAuthenticationRequired function', () => {
-  it('returns correct status code in object', () => {
-    expect(proxyAuthenticationRequired()).toEqual(MOCK_STATUS_CODE_RESPONSE);
-  });
-
   it('composes with headers and body passed', () => {
     expect(
       proxyAuthenticationRequired(
@@ -28,5 +28,13 @@ describe('proxyAuthenticationRequired function', () => {
           header(MOCK_HEADER_NAME, MOCK_HEADER_VALUE)
         )
     )).toEqual(MOCK_RESPONSE);
+  });
+
+  it('is equal to the functions that it composes', () => {
+    expect(proxyAuthenticationRequired()).toEqual(response(proxyAuthenticationRequired()));
+    expect(proxyAuthenticationRequired()).toEqual(response(statusCode(407)));
+    expect(proxyAuthenticationRequired()).toEqual(response(MOCK_STATUS_CODE_RESPONSE));
+    expect(proxyAuthenticationRequired()).toEqual(statusCode(407));
+    expect(proxyAuthenticationRequired()).toEqual(MOCK_STATUS_CODE_RESPONSE);
   });
 });

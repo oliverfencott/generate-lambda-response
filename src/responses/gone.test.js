@@ -1,7 +1,11 @@
+/* This is an auto-generated file. */
+
 const gone = require('./gone');
 const body = require('../body');
 const headers = require('../headers');
 const header = require('../header');
+const statusCode = require('../statusCode');
+const response = require('../response');
 
 const MOCK_STATUS_CODE_RESPONSE = { statusCode: 410 };
 const MOCK_HEADER_NAME = 'x-powered-by';
@@ -16,10 +20,6 @@ const MOCK_RESPONSE = {
 };
 
 describe('gone function', () => {
-  it('returns correct status code in object', () => {
-    expect(gone()).toEqual(MOCK_STATUS_CODE_RESPONSE);
-  });
-
   it('composes with headers and body passed', () => {
     expect(
       gone(
@@ -28,5 +28,13 @@ describe('gone function', () => {
           header(MOCK_HEADER_NAME, MOCK_HEADER_VALUE)
         )
     )).toEqual(MOCK_RESPONSE);
+  });
+
+  it('is equal to the functions that it composes', () => {
+    expect(gone()).toEqual(response(gone()));
+    expect(gone()).toEqual(response(statusCode(410)));
+    expect(gone()).toEqual(response(MOCK_STATUS_CODE_RESPONSE));
+    expect(gone()).toEqual(statusCode(410));
+    expect(gone()).toEqual(MOCK_STATUS_CODE_RESPONSE);
   });
 });

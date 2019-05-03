@@ -1,7 +1,11 @@
+/* This is an auto-generated file. */
+
 const useProxy = require('./useProxy');
 const body = require('../body');
 const headers = require('../headers');
 const header = require('../header');
+const statusCode = require('../statusCode');
+const response = require('../response');
 
 const MOCK_STATUS_CODE_RESPONSE = { statusCode: 305 };
 const MOCK_HEADER_NAME = 'x-powered-by';
@@ -16,10 +20,6 @@ const MOCK_RESPONSE = {
 };
 
 describe('useProxy function', () => {
-  it('returns correct status code in object', () => {
-    expect(useProxy()).toEqual(MOCK_STATUS_CODE_RESPONSE);
-  });
-
   it('composes with headers and body passed', () => {
     expect(
       useProxy(
@@ -28,5 +28,13 @@ describe('useProxy function', () => {
           header(MOCK_HEADER_NAME, MOCK_HEADER_VALUE)
         )
     )).toEqual(MOCK_RESPONSE);
+  });
+
+  it('is equal to the functions that it composes', () => {
+    expect(useProxy()).toEqual(response(useProxy()));
+    expect(useProxy()).toEqual(response(statusCode(305)));
+    expect(useProxy()).toEqual(response(MOCK_STATUS_CODE_RESPONSE));
+    expect(useProxy()).toEqual(statusCode(305));
+    expect(useProxy()).toEqual(MOCK_STATUS_CODE_RESPONSE);
   });
 });

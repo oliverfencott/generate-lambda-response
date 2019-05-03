@@ -1,7 +1,11 @@
+/* This is an auto-generated file. */
+
 const notAcceptable = require('./notAcceptable');
 const body = require('../body');
 const headers = require('../headers');
 const header = require('../header');
+const statusCode = require('../statusCode');
+const response = require('../response');
 
 const MOCK_STATUS_CODE_RESPONSE = { statusCode: 406 };
 const MOCK_HEADER_NAME = 'x-powered-by';
@@ -16,10 +20,6 @@ const MOCK_RESPONSE = {
 };
 
 describe('notAcceptable function', () => {
-  it('returns correct status code in object', () => {
-    expect(notAcceptable()).toEqual(MOCK_STATUS_CODE_RESPONSE);
-  });
-
   it('composes with headers and body passed', () => {
     expect(
       notAcceptable(
@@ -28,5 +28,13 @@ describe('notAcceptable function', () => {
           header(MOCK_HEADER_NAME, MOCK_HEADER_VALUE)
         )
     )).toEqual(MOCK_RESPONSE);
+  });
+
+  it('is equal to the functions that it composes', () => {
+    expect(notAcceptable()).toEqual(response(notAcceptable()));
+    expect(notAcceptable()).toEqual(response(statusCode(406)));
+    expect(notAcceptable()).toEqual(response(MOCK_STATUS_CODE_RESPONSE));
+    expect(notAcceptable()).toEqual(statusCode(406));
+    expect(notAcceptable()).toEqual(MOCK_STATUS_CODE_RESPONSE);
   });
 });

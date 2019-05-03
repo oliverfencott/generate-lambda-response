@@ -1,7 +1,11 @@
+/* This is an auto-generated file. */
+
 const locked = require('./locked');
 const body = require('../body');
 const headers = require('../headers');
 const header = require('../header');
+const statusCode = require('../statusCode');
+const response = require('../response');
 
 const MOCK_STATUS_CODE_RESPONSE = { statusCode: 423 };
 const MOCK_HEADER_NAME = 'x-powered-by';
@@ -16,10 +20,6 @@ const MOCK_RESPONSE = {
 };
 
 describe('locked function', () => {
-  it('returns correct status code in object', () => {
-    expect(locked()).toEqual(MOCK_STATUS_CODE_RESPONSE);
-  });
-
   it('composes with headers and body passed', () => {
     expect(
       locked(
@@ -28,5 +28,13 @@ describe('locked function', () => {
           header(MOCK_HEADER_NAME, MOCK_HEADER_VALUE)
         )
     )).toEqual(MOCK_RESPONSE);
+  });
+
+  it('is equal to the functions that it composes', () => {
+    expect(locked()).toEqual(response(locked()));
+    expect(locked()).toEqual(response(statusCode(423)));
+    expect(locked()).toEqual(response(MOCK_STATUS_CODE_RESPONSE));
+    expect(locked()).toEqual(statusCode(423));
+    expect(locked()).toEqual(MOCK_STATUS_CODE_RESPONSE);
   });
 });

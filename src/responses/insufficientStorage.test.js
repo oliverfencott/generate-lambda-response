@@ -1,7 +1,11 @@
+/* This is an auto-generated file. */
+
 const insufficientStorage = require('./insufficientStorage');
 const body = require('../body');
 const headers = require('../headers');
 const header = require('../header');
+const statusCode = require('../statusCode');
+const response = require('../response');
 
 const MOCK_STATUS_CODE_RESPONSE = { statusCode: 507 };
 const MOCK_HEADER_NAME = 'x-powered-by';
@@ -16,10 +20,6 @@ const MOCK_RESPONSE = {
 };
 
 describe('insufficientStorage function', () => {
-  it('returns correct status code in object', () => {
-    expect(insufficientStorage()).toEqual(MOCK_STATUS_CODE_RESPONSE);
-  });
-
   it('composes with headers and body passed', () => {
     expect(
       insufficientStorage(
@@ -28,5 +28,13 @@ describe('insufficientStorage function', () => {
           header(MOCK_HEADER_NAME, MOCK_HEADER_VALUE)
         )
     )).toEqual(MOCK_RESPONSE);
+  });
+
+  it('is equal to the functions that it composes', () => {
+    expect(insufficientStorage()).toEqual(response(insufficientStorage()));
+    expect(insufficientStorage()).toEqual(response(statusCode(507)));
+    expect(insufficientStorage()).toEqual(response(MOCK_STATUS_CODE_RESPONSE));
+    expect(insufficientStorage()).toEqual(statusCode(507));
+    expect(insufficientStorage()).toEqual(MOCK_STATUS_CODE_RESPONSE);
   });
 });

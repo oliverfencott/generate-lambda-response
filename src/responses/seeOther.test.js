@@ -1,7 +1,11 @@
+/* This is an auto-generated file. */
+
 const seeOther = require('./seeOther');
 const body = require('../body');
 const headers = require('../headers');
 const header = require('../header');
+const statusCode = require('../statusCode');
+const response = require('../response');
 
 const MOCK_STATUS_CODE_RESPONSE = { statusCode: 303 };
 const MOCK_HEADER_NAME = 'x-powered-by';
@@ -16,10 +20,6 @@ const MOCK_RESPONSE = {
 };
 
 describe('seeOther function', () => {
-  it('returns correct status code in object', () => {
-    expect(seeOther()).toEqual(MOCK_STATUS_CODE_RESPONSE);
-  });
-
   it('composes with headers and body passed', () => {
     expect(
       seeOther(
@@ -28,5 +28,13 @@ describe('seeOther function', () => {
           header(MOCK_HEADER_NAME, MOCK_HEADER_VALUE)
         )
     )).toEqual(MOCK_RESPONSE);
+  });
+
+  it('is equal to the functions that it composes', () => {
+    expect(seeOther()).toEqual(response(seeOther()));
+    expect(seeOther()).toEqual(response(statusCode(303)));
+    expect(seeOther()).toEqual(response(MOCK_STATUS_CODE_RESPONSE));
+    expect(seeOther()).toEqual(statusCode(303));
+    expect(seeOther()).toEqual(MOCK_STATUS_CODE_RESPONSE);
   });
 });

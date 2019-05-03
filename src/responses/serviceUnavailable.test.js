@@ -1,7 +1,11 @@
+/* This is an auto-generated file. */
+
 const serviceUnavailable = require('./serviceUnavailable');
 const body = require('../body');
 const headers = require('../headers');
 const header = require('../header');
+const statusCode = require('../statusCode');
+const response = require('../response');
 
 const MOCK_STATUS_CODE_RESPONSE = { statusCode: 503 };
 const MOCK_HEADER_NAME = 'x-powered-by';
@@ -16,10 +20,6 @@ const MOCK_RESPONSE = {
 };
 
 describe('serviceUnavailable function', () => {
-  it('returns correct status code in object', () => {
-    expect(serviceUnavailable()).toEqual(MOCK_STATUS_CODE_RESPONSE);
-  });
-
   it('composes with headers and body passed', () => {
     expect(
       serviceUnavailable(
@@ -28,5 +28,13 @@ describe('serviceUnavailable function', () => {
           header(MOCK_HEADER_NAME, MOCK_HEADER_VALUE)
         )
     )).toEqual(MOCK_RESPONSE);
+  });
+
+  it('is equal to the functions that it composes', () => {
+    expect(serviceUnavailable()).toEqual(response(serviceUnavailable()));
+    expect(serviceUnavailable()).toEqual(response(statusCode(503)));
+    expect(serviceUnavailable()).toEqual(response(MOCK_STATUS_CODE_RESPONSE));
+    expect(serviceUnavailable()).toEqual(statusCode(503));
+    expect(serviceUnavailable()).toEqual(MOCK_STATUS_CODE_RESPONSE);
   });
 });

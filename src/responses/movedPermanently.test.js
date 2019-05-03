@@ -1,7 +1,11 @@
+/* This is an auto-generated file. */
+
 const movedPermanently = require('./movedPermanently');
 const body = require('../body');
 const headers = require('../headers');
 const header = require('../header');
+const statusCode = require('../statusCode');
+const response = require('../response');
 
 const MOCK_STATUS_CODE_RESPONSE = { statusCode: 301 };
 const MOCK_HEADER_NAME = 'x-powered-by';
@@ -16,10 +20,6 @@ const MOCK_RESPONSE = {
 };
 
 describe('movedPermanently function', () => {
-  it('returns correct status code in object', () => {
-    expect(movedPermanently()).toEqual(MOCK_STATUS_CODE_RESPONSE);
-  });
-
   it('composes with headers and body passed', () => {
     expect(
       movedPermanently(
@@ -28,5 +28,13 @@ describe('movedPermanently function', () => {
           header(MOCK_HEADER_NAME, MOCK_HEADER_VALUE)
         )
     )).toEqual(MOCK_RESPONSE);
+  });
+
+  it('is equal to the functions that it composes', () => {
+    expect(movedPermanently()).toEqual(response(movedPermanently()));
+    expect(movedPermanently()).toEqual(response(statusCode(301)));
+    expect(movedPermanently()).toEqual(response(MOCK_STATUS_CODE_RESPONSE));
+    expect(movedPermanently()).toEqual(statusCode(301));
+    expect(movedPermanently()).toEqual(MOCK_STATUS_CODE_RESPONSE);
   });
 });

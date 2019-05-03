@@ -1,3 +1,5 @@
+/* This is an auto-generated file. */
+
 module.exports.ok = require('./ok');
 module.exports.created = require('./created');
 module.exports.accepted = require('./accepted');

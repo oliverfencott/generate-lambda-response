@@ -1,7 +1,11 @@
+/* This is an auto-generated file. */
+
 const temporaryRedirect = require('./temporaryRedirect');
 const body = require('../body');
 const headers = require('../headers');
 const header = require('../header');
+const statusCode = require('../statusCode');
+const response = require('../response');
 
 const MOCK_STATUS_CODE_RESPONSE = { statusCode: 307 };
 const MOCK_HEADER_NAME = 'x-powered-by';
@@ -16,10 +20,6 @@ const MOCK_RESPONSE = {
 };
 
 describe('temporaryRedirect function', () => {
-  it('returns correct status code in object', () => {
-    expect(temporaryRedirect()).toEqual(MOCK_STATUS_CODE_RESPONSE);
-  });
-
   it('composes with headers and body passed', () => {
     expect(
       temporaryRedirect(
@@ -28,5 +28,13 @@ describe('temporaryRedirect function', () => {
           header(MOCK_HEADER_NAME, MOCK_HEADER_VALUE)
         )
     )).toEqual(MOCK_RESPONSE);
+  });
+
+  it('is equal to the functions that it composes', () => {
+    expect(temporaryRedirect()).toEqual(response(temporaryRedirect()));
+    expect(temporaryRedirect()).toEqual(response(statusCode(307)));
+    expect(temporaryRedirect()).toEqual(response(MOCK_STATUS_CODE_RESPONSE));
+    expect(temporaryRedirect()).toEqual(statusCode(307));
+    expect(temporaryRedirect()).toEqual(MOCK_STATUS_CODE_RESPONSE);
   });
 });

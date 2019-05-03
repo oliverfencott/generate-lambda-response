@@ -1,7 +1,11 @@
+/* This is an auto-generated file. */
+
 const forbidden = require('./forbidden');
 const body = require('../body');
 const headers = require('../headers');
 const header = require('../header');
+const statusCode = require('../statusCode');
+const response = require('../response');
 
 const MOCK_STATUS_CODE_RESPONSE = { statusCode: 403 };
 const MOCK_HEADER_NAME = 'x-powered-by';
@@ -16,10 +20,6 @@ const MOCK_RESPONSE = {
 };
 
 describe('forbidden function', () => {
-  it('returns correct status code in object', () => {
-    expect(forbidden()).toEqual(MOCK_STATUS_CODE_RESPONSE);
-  });
-
   it('composes with headers and body passed', () => {
     expect(
       forbidden(
@@ -28,5 +28,13 @@ describe('forbidden function', () => {
           header(MOCK_HEADER_NAME, MOCK_HEADER_VALUE)
         )
     )).toEqual(MOCK_RESPONSE);
+  });
+
+  it('is equal to the functions that it composes', () => {
+    expect(forbidden()).toEqual(response(forbidden()));
+    expect(forbidden()).toEqual(response(statusCode(403)));
+    expect(forbidden()).toEqual(response(MOCK_STATUS_CODE_RESPONSE));
+    expect(forbidden()).toEqual(statusCode(403));
+    expect(forbidden()).toEqual(MOCK_STATUS_CODE_RESPONSE);
   });
 });

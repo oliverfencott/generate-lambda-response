@@ -1,7 +1,11 @@
+/* This is an auto-generated file. */
+
 const loopDetected = require('./loopDetected');
 const body = require('../body');
 const headers = require('../headers');
 const header = require('../header');
+const statusCode = require('../statusCode');
+const response = require('../response');
 
 const MOCK_STATUS_CODE_RESPONSE = { statusCode: 508 };
 const MOCK_HEADER_NAME = 'x-powered-by';
@@ -16,10 +20,6 @@ const MOCK_RESPONSE = {
 };
 
 describe('loopDetected function', () => {
-  it('returns correct status code in object', () => {
-    expect(loopDetected()).toEqual(MOCK_STATUS_CODE_RESPONSE);
-  });
-
   it('composes with headers and body passed', () => {
     expect(
       loopDetected(
@@ -28,5 +28,13 @@ describe('loopDetected function', () => {
           header(MOCK_HEADER_NAME, MOCK_HEADER_VALUE)
         )
     )).toEqual(MOCK_RESPONSE);
+  });
+
+  it('is equal to the functions that it composes', () => {
+    expect(loopDetected()).toEqual(response(loopDetected()));
+    expect(loopDetected()).toEqual(response(statusCode(508)));
+    expect(loopDetected()).toEqual(response(MOCK_STATUS_CODE_RESPONSE));
+    expect(loopDetected()).toEqual(statusCode(508));
+    expect(loopDetected()).toEqual(MOCK_STATUS_CODE_RESPONSE);
   });
 });

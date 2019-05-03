@@ -1,17 +1,23 @@
-const { map, join, pipe, prop } = require('lodash/fp');
+const { map, join, pipe, prop, concat } = require('lodash/fp');
 
 const helperFile = ({ statusCode }) => (
-`const statusCode = require('../statusCode');
+`/* This is an auto-generated file. */
+
+const statusCode = require('../statusCode');
 const _hoistedMerge = require('../_hoistedMerge');
 
 module.exports = _hoistedMerge(statusCode(${statusCode}));`
 );
 
 const testFile = ({ statusCode, functionName }) => (
-`const ${functionName} = require('./${functionName}');
+`/* This is an auto-generated file. */
+
+const ${functionName} = require('./${functionName}');
 const body = require('../body');
 const headers = require('../headers');
 const header = require('../header');
+const statusCode = require('../statusCode');
+const response = require('../response');
 
 const MOCK_STATUS_CODE_RESPONSE = { statusCode: ${statusCode} };
 const MOCK_HEADER_NAME = 'x-powered-by';
@@ -26,10 +32,6 @@ const MOCK_RESPONSE = {
 };
 
 describe('${functionName} function', () => {
-  it('returns correct status code in object', () => {
-    expect(${functionName}()).toEqual(MOCK_STATUS_CODE_RESPONSE);
-  });
-
   it('composes with headers and body passed', () => {
     expect(
       ${functionName}(
@@ -38,6 +40,14 @@ describe('${functionName} function', () => {
           header(MOCK_HEADER_NAME, MOCK_HEADER_VALUE)
         )
     )).toEqual(MOCK_RESPONSE);
+  });
+
+  it('is equal to the functions that it composes', () => {
+    expect(${functionName}()).toEqual(response(${functionName}()));
+    expect(${functionName}()).toEqual(response(statusCode(${statusCode})));
+    expect(${functionName}()).toEqual(response(MOCK_STATUS_CODE_RESPONSE));
+    expect(${functionName}()).toEqual(statusCode(${statusCode}));
+    expect(${functionName}()).toEqual(MOCK_STATUS_CODE_RESPONSE);
   });
 });`
 );
@@ -53,7 +63,8 @@ const log = fn => {
 const indexFile = pipe(
   map(('functionName')),
   map(functionName => `module.exports.${functionName} = require('./${functionName}');`),
-  join('\n')
+  concat('/* This is an auto-generated file. */\n'),
+  join('\n'),
 );
 
 module.exports = {

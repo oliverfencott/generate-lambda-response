@@ -1,7 +1,11 @@
+/* This is an auto-generated file. */
+
 const misdirectedRequest = require('./misdirectedRequest');
 const body = require('../body');
 const headers = require('../headers');
 const header = require('../header');
+const statusCode = require('../statusCode');
+const response = require('../response');
 
 const MOCK_STATUS_CODE_RESPONSE = { statusCode: 421 };
 const MOCK_HEADER_NAME = 'x-powered-by';
@@ -16,10 +20,6 @@ const MOCK_RESPONSE = {
 };
 
 describe('misdirectedRequest function', () => {
-  it('returns correct status code in object', () => {
-    expect(misdirectedRequest()).toEqual(MOCK_STATUS_CODE_RESPONSE);
-  });
-
   it('composes with headers and body passed', () => {
     expect(
       misdirectedRequest(
@@ -28,5 +28,13 @@ describe('misdirectedRequest function', () => {
           header(MOCK_HEADER_NAME, MOCK_HEADER_VALUE)
         )
     )).toEqual(MOCK_RESPONSE);
+  });
+
+  it('is equal to the functions that it composes', () => {
+    expect(misdirectedRequest()).toEqual(response(misdirectedRequest()));
+    expect(misdirectedRequest()).toEqual(response(statusCode(421)));
+    expect(misdirectedRequest()).toEqual(response(MOCK_STATUS_CODE_RESPONSE));
+    expect(misdirectedRequest()).toEqual(statusCode(421));
+    expect(misdirectedRequest()).toEqual(MOCK_STATUS_CODE_RESPONSE);
   });
 });

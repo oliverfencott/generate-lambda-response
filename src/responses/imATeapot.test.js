@@ -1,7 +1,11 @@
+/* This is an auto-generated file. */
+
 const imATeapot = require('./imATeapot');
 const body = require('../body');
 const headers = require('../headers');
 const header = require('../header');
+const statusCode = require('../statusCode');
+const response = require('../response');
 
 const MOCK_STATUS_CODE_RESPONSE = { statusCode: 418 };
 const MOCK_HEADER_NAME = 'x-powered-by';
@@ -16,10 +20,6 @@ const MOCK_RESPONSE = {
 };
 
 describe('imATeapot function', () => {
-  it('returns correct status code in object', () => {
-    expect(imATeapot()).toEqual(MOCK_STATUS_CODE_RESPONSE);
-  });
-
   it('composes with headers and body passed', () => {
     expect(
       imATeapot(
@@ -28,5 +28,13 @@ describe('imATeapot function', () => {
           header(MOCK_HEADER_NAME, MOCK_HEADER_VALUE)
         )
     )).toEqual(MOCK_RESPONSE);
+  });
+
+  it('is equal to the functions that it composes', () => {
+    expect(imATeapot()).toEqual(response(imATeapot()));
+    expect(imATeapot()).toEqual(response(statusCode(418)));
+    expect(imATeapot()).toEqual(response(MOCK_STATUS_CODE_RESPONSE));
+    expect(imATeapot()).toEqual(statusCode(418));
+    expect(imATeapot()).toEqual(MOCK_STATUS_CODE_RESPONSE);
   });
 });

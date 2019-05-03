@@ -1,2 +1,2 @@
 # generate-lambda-response
-Utilities to generate lambda responses
+Utilities to generate AWS lambda responses

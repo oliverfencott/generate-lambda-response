@@ -1,7 +1,11 @@
+/* This is an auto-generated file. */
+
 const unavailableForLegalReasons = require('./unavailableForLegalReasons');
 const body = require('../body');
 const headers = require('../headers');
 const header = require('../header');
+const statusCode = require('../statusCode');
+const response = require('../response');
 
 const MOCK_STATUS_CODE_RESPONSE = { statusCode: 451 };
 const MOCK_HEADER_NAME = 'x-powered-by';
@@ -16,10 +20,6 @@ const MOCK_RESPONSE = {
 };
 
 describe('unavailableForLegalReasons function', () => {
-  it('returns correct status code in object', () => {
-    expect(unavailableForLegalReasons()).toEqual(MOCK_STATUS_CODE_RESPONSE);
-  });
-
   it('composes with headers and body passed', () => {
     expect(
       unavailableForLegalReasons(
@@ -28,5 +28,13 @@ describe('unavailableForLegalReasons function', () => {
           header(MOCK_HEADER_NAME, MOCK_HEADER_VALUE)
         )
     )).toEqual(MOCK_RESPONSE);
+  });
+
+  it('is equal to the functions that it composes', () => {
+    expect(unavailableForLegalReasons()).toEqual(response(unavailableForLegalReasons()));
+    expect(unavailableForLegalReasons()).toEqual(response(statusCode(451)));
+    expect(unavailableForLegalReasons()).toEqual(response(MOCK_STATUS_CODE_RESPONSE));
+    expect(unavailableForLegalReasons()).toEqual(statusCode(451));
+    expect(unavailableForLegalReasons()).toEqual(MOCK_STATUS_CODE_RESPONSE);
   });
 });
