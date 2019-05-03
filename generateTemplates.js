@@ -1,4 +1,5 @@
 const { map, join, pipe, prop, concat } = require('lodash/fp');
+const package = require('./package.json');
 
 const helperFile = ({ statusCode }) => (
 `/* This is an auto-generated file. */
@@ -22,13 +23,12 @@ const response = require('../response');
 const MOCK_STATUS_CODE_RESPONSE = { statusCode: ${statusCode} };
 const MOCK_HEADER_NAME = 'x-powered-by';
 const MOCK_HEADER_VALUE = 'somedomain.com';
+const MOCK_HEADERS = { [MOCK_HEADER_NAME]: MOCK_HEADER_VALUE };
 const MOCK_BODY = { hello: 'world' };
 const MOCK_RESPONSE = {
   ...MOCK_STATUS_CODE_RESPONSE,
   body: JSON.stringify(MOCK_BODY),
-  headers: {
-    [MOCK_HEADER_NAME]: MOCK_HEADER_VALUE
-  }
+  headers: MOCK_HEADERS
 };
 
 describe('${functionName} function', () => {
@@ -48,17 +48,18 @@ describe('${functionName} function', () => {
     expect(${functionName}()).toEqual(response(MOCK_STATUS_CODE_RESPONSE));
     expect(${functionName}()).toEqual(statusCode(${statusCode}));
     expect(${functionName}()).toEqual(MOCK_STATUS_CODE_RESPONSE);
+
+    expect(${functionName}(
+      headers(header(MOCK_HEADER_NAME)(MOCK_HEADER_VALUE)),
+      body(MOCK_BODY)
+    )).toEqual({
+      statusCode: ${statusCode},
+      headers: MOCK_HEADERS,
+      body: JSON.stringify(MOCK_BODY)
+    });
   });
 });`
 );
-
-const log = fn => {
-  return (...args) => {
-    const out = fn(...args);
-    console.log(out);
-    return out;
-  }
-}
 
 const indexFile = pipe(
   map(('functionName')),
@@ -67,8 +68,126 @@ const indexFile = pipe(
   join('\n'),
 );
 
+const READMEFile = () => (
+`# ${package.name}
+Utilities to generate AWS lambda responses
+
+## Usage
+
+${'```'}js
+// These imports are equivalent:
+
+const {
+  response,
+  statusCode,
+  body,
+  header,
+  headers
+} = require('${package.name}');
+
+const response = require('${package.name}/response');
+const statusCode = require('${package.name}/statusCode');
+const body = require('${package.name}/body');
+const header = require('${package.name}/header');
+const headers = require('${package.name}/headers');
+
+// And:
+
+const { ok } = require('${package.name}/responses');
+const ok = require('${package.name}/responses/ok');
+
+// The following are equivalent:
+
+const desiredResponse = { statusCode: 200 };
+const desiredResponse = response(statusCode(200));
+const desiredResponse = statusCode(200);
+const desiredResponse = response(ok());
+const desiredResponse = ok();
+
+// As are the following:
+
+const desiredResponse = {
+  statusCode: 200,
+  headers: {
+    foo: 'bar'
+  }
+};
+
+const desiredResponse = response(
+  statusCode(200), {
+    headers: {
+      foo: 'bar'
+    }
+  }
+);
+
+const desiredResponse = response(
+  statusCode(200),
+  headers({
+    foo: 'bar'
+  })
+);
+
+const desiredResponse = response(
+  ok(),
+  headers(header('foo', 'bar'))
+);
+
+const desiredResponse = ok(
+  headers(header('foo')('bar'))
+);
+
+// As are the following:
+
+const desiredResponse = {
+  statusCode: 200,
+  headers: {
+    foo: 'bar'
+  },
+  body: JSON.stringify({
+    foo: 'bar'
+  })
+};
+
+const desiredResponse = response(
+  statusCode(200), {
+    headers: {
+      foo: 'bar'
+    }
+  }, {
+    body: JSON.stringify({
+      foo: 'bar'
+    })
+  }
+);
+
+const desiredResponse = response(
+  statusCode(200),
+  headers({
+    foo: 'bar'
+  }),
+  body({ foo: 'bar' })
+);
+
+const desiredResponse = response(
+  ok(),
+  headers(header('foo', 'bar')),
+  body({ foo: 'bar' })
+);
+
+const desiredResponse = ok(
+  headers(header('foo')('bar')),
+  body({ foo: 'bar' })
+);
+
+${'```'}
+
+`
+);
+
 module.exports = {
   helperFile,
   testFile,
-  indexFile
+  indexFile,
+  READMEFile
 };

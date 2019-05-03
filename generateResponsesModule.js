@@ -16,7 +16,7 @@ const {
 } = require('lodash/fp');
 const rimraf = require('rimraf');
 
-const { helperFile, testFile, indexFile } = require('./generateTemplates');
+const { helperFile, testFile, indexFile, READMEFile } = require('./generateTemplates');
 
 const outputDirectory = 'src/responses';
 
@@ -39,6 +39,8 @@ const writeResponseFile = writeFileFactory(prop('functionName'), helperFile);
 const writeResponseTestFile = writeFileFactory(pipe(({ functionName }) => `${functionName}.test`), testFile);
 const writeResponseIndexFile = writeFileFactory(constant('index'), indexFile);
 
+const writeReadmeFile = () => writeFile('README.md', READMEFile());
+
 const pullStatusCode = pipe(slice(0, 3), join(''));
 const pullOnlyStatusCodes = filter(pipe(pullStatusCode, Number, negate(Number.isNaN)));
 
@@ -58,4 +60,6 @@ readFile('./httpStatusCodes.md', 'utf-8')
   .then(map(writeResponseTestFile))
   .then(Promise.all.bind(Promise))
   .then(codes => (console.log(`✅  Successfully generated test files`), codes))
+  .then(writeReadmeFile)
+  .then(() => (console.log(`✅  Successfully generated README.md`)))
   .catch(catchError)

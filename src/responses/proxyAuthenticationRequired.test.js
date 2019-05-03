@@ -10,13 +10,12 @@ const response = require('../response');
 const MOCK_STATUS_CODE_RESPONSE = { statusCode: 407 };
 const MOCK_HEADER_NAME = 'x-powered-by';
 const MOCK_HEADER_VALUE = 'somedomain.com';
+const MOCK_HEADERS = { [MOCK_HEADER_NAME]: MOCK_HEADER_VALUE };
 const MOCK_BODY = { hello: 'world' };
 const MOCK_RESPONSE = {
   ...MOCK_STATUS_CODE_RESPONSE,
   body: JSON.stringify(MOCK_BODY),
-  headers: {
-    [MOCK_HEADER_NAME]: MOCK_HEADER_VALUE
-  }
+  headers: MOCK_HEADERS
 };
 
 describe('proxyAuthenticationRequired function', () => {
@@ -36,5 +35,14 @@ describe('proxyAuthenticationRequired function', () => {
     expect(proxyAuthenticationRequired()).toEqual(response(MOCK_STATUS_CODE_RESPONSE));
     expect(proxyAuthenticationRequired()).toEqual(statusCode(407));
     expect(proxyAuthenticationRequired()).toEqual(MOCK_STATUS_CODE_RESPONSE);
+
+    expect(proxyAuthenticationRequired(
+      headers(header(MOCK_HEADER_NAME)(MOCK_HEADER_VALUE)),
+      body(MOCK_BODY)
+    )).toEqual({
+      statusCode: 407,
+      headers: MOCK_HEADERS,
+      body: JSON.stringify(MOCK_BODY)
+    });
   });
 });

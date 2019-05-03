@@ -10,13 +10,12 @@ const response = require('../response');
 const MOCK_STATUS_CODE_RESPONSE = { statusCode: 403 };
 const MOCK_HEADER_NAME = 'x-powered-by';
 const MOCK_HEADER_VALUE = 'somedomain.com';
+const MOCK_HEADERS = { [MOCK_HEADER_NAME]: MOCK_HEADER_VALUE };
 const MOCK_BODY = { hello: 'world' };
 const MOCK_RESPONSE = {
   ...MOCK_STATUS_CODE_RESPONSE,
   body: JSON.stringify(MOCK_BODY),
-  headers: {
-    [MOCK_HEADER_NAME]: MOCK_HEADER_VALUE
-  }
+  headers: MOCK_HEADERS
 };
 
 describe('forbidden function', () => {
@@ -36,5 +35,14 @@ describe('forbidden function', () => {
     expect(forbidden()).toEqual(response(MOCK_STATUS_CODE_RESPONSE));
     expect(forbidden()).toEqual(statusCode(403));
     expect(forbidden()).toEqual(MOCK_STATUS_CODE_RESPONSE);
+
+    expect(forbidden(
+      headers(header(MOCK_HEADER_NAME)(MOCK_HEADER_VALUE)),
+      body(MOCK_BODY)
+    )).toEqual({
+      statusCode: 403,
+      headers: MOCK_HEADERS,
+      body: JSON.stringify(MOCK_BODY)
+    });
   });
 });

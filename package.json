@@ -10,7 +10,7 @@
     "dev": "nodemon",
     "pretest": "node generateResponsesModule",
     "test": "jest",
-    "prepublish": "node generateResponsesModule"
+    "prepublish": "yarn test"
   },
   "repository": {
     "type": "git",
