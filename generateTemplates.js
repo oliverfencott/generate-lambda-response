@@ -51,11 +51,9 @@ const log = fn => {
 }
 
 const indexFile = pipe(
-  // log,
   map(('functionName')),
   map(functionName => `module.exports.${functionName} = require('./${functionName}');`),
-  join('\n'),
-  // log
+  join('\n')
 );
 
 module.exports = {
