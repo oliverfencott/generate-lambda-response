@@ -1,0 +1,22 @@
+{
+  "name": "generate-lambda-response",
+  "version": "1.0.0",
+  "description": "Utilities to generate lambda responses",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/oliverfencott/generate-lambda-response.git"
+  },
+  "author": "",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/oliverfencott/generate-lambda-response/issues"
+  },
+  "homepage": "https://github.com/oliverfencott/generate-lambda-response#readme",
+  "devDependencies": {
+    "jest": "^24.7.1"
+  }
+}
