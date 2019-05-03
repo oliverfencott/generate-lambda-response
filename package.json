@@ -2,9 +2,12 @@
   "name": "generate-lambda-response",
   "version": "1.0.0",
   "description": "Utilities to generate lambda responses",
-  "main": "index.js",
+  "main": "src",
+  "files": [
+    "/src"
+  ],
   "scripts": {
-    "dev": "nodemon index",
+    "dev": "nodemon",
     "test": "jest"
   },
   "repository": {
@@ -20,6 +23,7 @@
   "devDependencies": {
     "jest": "^24.7.1",
     "lodash": "^4.17.11",
-    "nodemon": "^1.19.0"
+    "nodemon": "^1.19.0",
+    "rimraf": "^2.6.3"
   }
 }
