@@ -4,7 +4,8 @@
   "description": "Utilities to generate lambda responses",
   "main": "index.js",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "dev": "nodemon index",
+    "test": "jest"
   },
   "repository": {
     "type": "git",
@@ -17,6 +18,8 @@
   },
   "homepage": "https://github.com/oliverfencott/generate-lambda-response#readme",
   "devDependencies": {
-    "jest": "^24.7.1"
+    "jest": "^24.7.1",
+    "lodash": "^4.17.11",
+    "nodemon": "^1.19.0"
   }
 }
