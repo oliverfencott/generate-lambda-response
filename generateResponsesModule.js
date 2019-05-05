@@ -1,6 +1,6 @@
 const { promisify } = require('util');
 const fs = require('fs');
-const [ readFile, writeFile ] = [ promisify(fs.readFile), promisify(fs.writeFile) ];
+const writeFile = promisify(fs.writeFile);
 const {
   camelCase,
   pipe,
@@ -14,9 +14,11 @@ const {
   prop,
   concat
 } = require('lodash/fp');
-const rimraf = require('rimraf');
 
-const { helperFile, testFile, indexFile, READMEFile } = require('./generateTemplates');
+const rimraf = require('rimraf');
+const statusCodes = require('./httpStatusCodes.json');
+
+const { HTTPResponse, HTTPResponseTest, HTTPResponseIndex, README } = require('./templates');
 
 const outputDirectory = 'src/responses';
 
@@ -35,31 +37,26 @@ const writeFileFactory = (nameGenerator, generator) => input => writeFile(
   generator(input)
 ).then(constant(input));
 
-const writeResponseFile = writeFileFactory(prop('functionName'), helperFile);
-const writeResponseTestFile = writeFileFactory(pipe(({ functionName }) => `${functionName}.test`), testFile);
-const writeResponseIndexFile = writeFileFactory(constant('index'), indexFile);
+const writeResponseFile = writeFileFactory(prop('functionName'), HTTPResponse);
+const writeResponseTestFile = writeFileFactory(pipe(({ functionName }) => `${functionName}.test`), HTTPResponseTest);
+const writeResponseIndexFile = writeFileFactory(constant('index'), HTTPResponseIndex);
 
-const writeReadmeFile = () => writeFile('README.md', READMEFile());
+const writeReadmeFile = () => writeFile('README.md', README());
 
 const pullStatusCode = pipe(slice(0, 3), join(''));
 const pullOnlyStatusCodes = filter(pipe(pullStatusCode, Number, negate(Number.isNaN)));
 
 
-readFile('./httpStatusCodes.md', 'utf-8')
-  .catch(catchError)
-  .then(pipe(split('\n'), filter(Boolean)))
-  .then(pullOnlyStatusCodes)
-  .then(map(code => ([ pullStatusCode(code), code.slice(4) ])))
-  .then(map(([ statusCode, functionName ]) => ([ Number(statusCode), camelCase(functionName) ])))
-  .then(map(([ statusCode, functionName ]) => ({ statusCode, functionName })))
+Promise
+  .resolve(statusCodes)
   .then(writeResponseIndexFile)
-  .then(codes => (console.log(`✅  Successfully generated index file`), codes))
+  .then(codes => console.log(`✅  Successfully generated index file`) || codes)
   .then(map(writeResponseFile))
   .then(Promise.all.bind(Promise))
-  .then(codes => (console.log(`✅  Successfully generated code files`), codes))
+  .then(codes => console.log(`✅  Successfully generated code files`) || codes)
   .then(map(writeResponseTestFile))
   .then(Promise.all.bind(Promise))
-  .then(codes => (console.log(`✅  Successfully generated test files`), codes))
+  .then(codes => console.log(`✅  Successfully generated test files`) || codes)
   .then(writeReadmeFile)
-  .then(() => (console.log(`✅  Successfully generated README.md`)))
+  .then(() => console.log(`✅  Successfully generated README.md`))
   .catch(catchError)
