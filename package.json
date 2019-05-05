@@ -4,13 +4,15 @@
   "description": "A zero dependency library to generate AWS lambda HTTP responses",
   "main": "index.js",
   "files": [
-    "index",
-    "response",
-    "statusCode",
-    "body",
-    "header",
-    "headers",
-    "responses"
+    "/index.js",
+    "/response.js",
+    "/statusCode.js",
+    "/body.js",
+    "/header.js",
+    "/headers.js",
+    "/responses/*.js",
+    "!/responses/*.test.js",
+    "_utils"
   ],
   "keywords": [
     "vidglo",
