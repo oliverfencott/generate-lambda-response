@@ -1,10 +1,25 @@
 {
-  "name": "generate-lambda-response",
-  "version": "1.0.0",
-  "description": "Utilities to generate lambda responses",
-  "main": "index.js",
+  "name": "@vidglo/lambda-http",
+  "version": "0.1.0",
+  "description": "A zero dependency library to generate AWS lambda HTTP responses",
+  "main": "src",
+  "files": [
+    "/src"
+  ],
+  "keywords": [
+    "vidglo",
+    "aws",
+    "lambda",
+    "http",
+    "response",
+    "responses",
+    "helpers"
+  ],
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "dev": "nodemon",
+    "pretest": "node generateResponsesModule",
+    "test": "jest",
+    "prepublish": "yarn test"
   },
   "repository": {
     "type": "git",
@@ -17,6 +32,9 @@
   },
   "homepage": "https://github.com/oliverfencott/generate-lambda-response#readme",
   "devDependencies": {
-    "jest": "^24.7.1"
+    "jest": "^24.7.1",
+    "lodash": "^4.17.11",
+    "nodemon": "^1.19.0",
+    "rimraf": "^2.6.3"
   }
 }
