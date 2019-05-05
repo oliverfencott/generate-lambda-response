@@ -20,7 +20,7 @@ const statusCodes = require('./httpStatusCodes.json');
 
 const { HTTPResponse, HTTPResponseTest, HTTPResponseIndex, README } = require('./templates');
 
-const outputDirectory = 'src/responses';
+const outputDirectory = 'responses';
 
 rimraf.sync(outputDirectory);
 console.log(`🗑  Deleted stale "${outputDirectory}" directory`);

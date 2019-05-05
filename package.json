@@ -2,9 +2,15 @@
   "name": "@vidglo/lambda-http",
   "version": "0.1.0",
   "description": "A zero dependency library to generate AWS lambda HTTP responses",
-  "main": "src",
+  "main": "index.js",
   "files": [
-    "/src"
+    "index",
+    "response",
+    "statusCode",
+    "body",
+    "header",
+    "headers",
+    "responses"
   ],
   "keywords": [
     "vidglo",
@@ -17,9 +23,10 @@
   ],
   "scripts": {
     "dev": "nodemon",
-    "pretest": "node generateResponsesModule",
+    "build": "node build-files.js",
+    "pretest": "yarn build",
     "test": "jest",
-    "prepublish": "yarn test"
+    "prepublishOnly": "yarn test"
   },
   "repository": {
     "type": "git",
