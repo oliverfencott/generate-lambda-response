@@ -1,7 +1,7 @@
 const { map, join, pipe, prop, concat } = require('lodash/fp');
 const package = require('../package.json');
-const src = require('../src');
-const srcExports = Object.keys(src);
+const index = require('../index');
+const srcExports = Object.keys(index);
 const statusCodes = require('../httpStatusCodes.json');
 
 const THREE_BACKTICKS = '```';
